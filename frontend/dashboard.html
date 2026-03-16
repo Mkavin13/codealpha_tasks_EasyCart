@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Easy Cart</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin: 2rem auto 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dashboard-nav {
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dashboard-nav h3 {
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            font-size: 1.25rem;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem;
+            color: var(--subtext);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .dashboard-content {
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header h2 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--subtext);
+        }
+
+        /* Profile Styles */
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            max-width: 500px;
+        }
+
+        .info-group {
+            background: var(--hover);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .info-label {
+            display: block;
+            color: var(--subtext);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-value {
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Order Styles */
+        .order-card {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-delivered {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .status-processing {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .status-shipped {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-cancelled {
+            background: rgba(2ef4, 63, 94, 0.2);
+            color: #fb7185;
+        }
+
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .order-item-list {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .order-item-list img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .order-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--subtext);
+        }
+
+        /* Password Reset Form Specifics */
+        .password-form {
+            max-width: 400px;
+        }
+
+        .message-box {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .message-box.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: block;
+        }
+
+        .message-box.error {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button onclick="window.history.back()"
+                    style="background: none; border: none; cursor: pointer; color: var(--secondary); display: flex; align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                    onmouseout="this.style.background='none'" aria-label="Go Back" title="Go Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <a href="/" class="logo">Easy Cart</a>
+            </div>
+            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <div id="authLinks" style="display: flex; gap: 1rem; align-items: center;">
+                    <!-- Populated by main.js -->
+                </div>
+                <a href="/cart.html"
+                    style="color: var(--text); text-decoration: none; position: relative; display: flex; align-items: center; gap: 0.5rem; font-weight: 500;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Cart <span class="cart-count" id="cartCount" style="margin-left: 0.5rem;">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container dashboard-page">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1 id="welcomeUser">Welcome back! <span class="wave">👋</span></h1>
+            <p>Here's what's happening with your account today.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                </div>
+                <div class="stats-info">
+                    <span class="stats-label">Total Orders</span>
+                    <span class="stats-value" id="statTotalOrders">0</span>
+                    <span class="stats-trend trend-up">↑ 12% this month</span>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
+                </div>
+                <div class="stats-info">
+                    <span class="stats-label">Total Spent</span>
+                    <span class="stats-value" id="statTotalSpent">₹0.00</span>
+                    <span class="stats-trend trend-sub">Lifetime value</span>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                </div>
+                <div class="stats-info">
+                    <span class="stats-label">Completed Orders</span>
+                    <span class="stats-value" id="statCompletedOrders">0</span>
+                    <span class="stats-trend trend-up">↑ 8% success rate</span>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                    </svg>
+                </div>
+                <div class="stats-info">
+                    <span class="stats-label">Loyalty Points</span>
+                    <span class="stats-value" id="statLoyaltyPoints">0</span>
+                    <span class="stats-trend trend-sub">Earn more points</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <!-- Sidebar Navigation -->
+            <aside class="dashboard-nav">
+                <div class="sidebar-profile" id="sidebarProfile">
+                    <div class="profile-avatar-container">
+                        <div class="profile-avatar" id="userInitial">U</div>
+                        <div class="avatar-edit">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                <circle cx="12" cy="13" r="4" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="profile-name" id="profileNameDisplay">User Name</div>
+                    <div class="profile-email" id="profileEmailDisplay">user@example.com</div>
+                    <div class="profile-meta" id="memberSinceDisplay">Member since March 2026</div>
+                </div>
+
+                <div class="dashboard-nav-premium">
+                    <a class="nav-item-premium active" onclick="switchTab('profile')" id="nav-profile">
+                        <div class="nav-link-content">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
+                            Dashboard Overview
+                        </div>
+                    </a>
+                    <a class="nav-item-premium" onclick="switchTab('orders')" id="nav-orders">
+                        <div class="nav-link-content">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <path d="M16 10a4 4 0 0 1-8 0" />
+                            </svg>
+                            My Orders
+                        </div>
+                        <span class="nav-badge" id="orderCountBadge">0</span>
+                    </a>
+                    <a class="nav-item-premium" onclick="switchTab('security')" id="nav-security">
+                        <div class="nav-link-content">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                            Profile Settings
+                        </div>
+                    </a>
+                    <a class="nav-item-premium">
+                        <div class="nav-link-content">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                            Wishlist
+                        </div>
+                        <span class="nav-badge">0</span>
+                    </a>
+                    <a class="nav-item-premium" onclick="logout()" style="color: #fb7185; margin-top: 1rem;">
+                        <div class="nav-link-content">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Sign Out
+                        </div>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="dashboard-content">
+
+                <!-- Profile Section -->
+                <section id="profile" class="content-section active">
+                    <div class="dashboard-section-header">
+                        <h2>Recent Orders</h2>
+                        <a href="#orders" onclick="switchTab('orders')" class="view-all-link">View All →</a>
+                    </div>
+
+                    <div class="premium-table-container">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 3rem; color: var(--subtext);">
+                                        Loading recent orders...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="dashboard-section-header">
+                        <h2>My Profile</h2>
+                    </div>
+                    <div class="profile-info" id="profileData">
+                        <div style="color: var(--subtext);">Loading profile...</div>
+                    </div>
+                </section>
+
+                <!-- Orders Section -->
+                <section id="orders" class="content-section">
+                    <div class="section-header">
+                        <h2>Order History</h2>
+                        <p>View your past purchases and their status.</p>
+                    </div>
+                    <div id="ordersList">
+                        <div style="color: var(--subtext);">Loading orders...</div>
+                    </div>
+                </section>
+
+                <!-- Security Section -->
+                <section id="security" class="content-section">
+                    <div class="section-header">
+                        <h2>Security Settings</h2>
+                        <p>Update your password to keep your account secure.</p>
+                    </div>
+
+                    <div id="passwordMessage" class="message-box"></div>
+
+                    <form id="passwordForm" class="password-form">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" class="form-control" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirm New Password</label>
+                            <input type="password" id="confirmNewPassword" class="form-control" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; border-radius: 8px; padding: 1rem; border: none; font-weight: bold; cursor: pointer; color: white; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); margin-top: 1rem;">Update
+                            Password</button>
+                    </form>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Easy Cart</h3>
+                    <p>Your premium and reliable e-commerce store for everyday shopping. Discover quality products
+                        curated just for you.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/cart.html">Cart</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: support@easycart.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script> Easy Cart. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Easy Cart</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button onclick="window.history.back()"
+                    style="background: none; border: none; cursor: pointer; color: var(--secondary); display: flex; align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                    onmouseout="this.style.background='none'" aria-label="Go Back" title="Go Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <a href="/" class="logo">Easy Cart</a>
+            </div>
+            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <div id="authLinks" style="display: flex; gap: 1rem; align-items: center;"></div>
+                <a href="/cart.html" class="cart-icon"
+                    style="color: var(--text); text-decoration: none; position: relative; display: flex; align-items: center; gap: 0.5rem; font-weight: 500;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="cart-container">
+            <h1 style="margin: 2rem 0;">Shopping Cart</h1>
+            <div id="cartItems">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="cart-total" id="cartTotal">
+                Total: $0.00
+            </div>
+            <div style="text-align: right;">
+                <button onclick="checkout()" class="btn btn-primary" id="checkoutBtn">Proceed to Checkout</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Easy Cart</h3>
+                    <p>Your premium and reliable e-commerce store for everyday shopping. Discover quality products
+                        curated just for you.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/cart.html">Cart</a>
+                    <a href="/login.html">Login</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: support@easycart.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script> Easy Cart. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+</body>
+
+</html>

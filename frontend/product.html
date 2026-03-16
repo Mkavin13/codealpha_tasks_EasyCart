@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpack - Easy Cart</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .product-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+        }
+
+        .image-gallery {
+            width: 100%;
+        }
+
+        .main-image-box {
+            width: 100%;
+            height: 480px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .main-image-box img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+
+        .main-image-box:hover img {
+            transform: scale(1.05);
+        }
+
+        .thumbnail-strip {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+            scrollbar-width: none;
+        }
+
+        .thumbnail-strip::-webkit-scrollbar {
+            display: none;
+        }
+
+        .thumbnail-strip img {
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .thumbnail-strip img:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .thumbnail-strip img.active {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .product-info {
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-info h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+            line-height: 1.1;
+        }
+
+        .price {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .stock {
+            color: var(--success);
+            font-weight: 600;
+            margin: 1.5rem 0;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 9999px;
+            font-size: 0.95rem;
+        }
+
+        .quantity-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 2.5rem 0;
+            padding: 0.5rem;
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            width: max-content;
+        }
+
+        .quantity-box label {
+            padding-left: 1rem;
+            font-weight: 600;
+            color: var(--subtext);
+        }
+
+        .quantity-box button {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--hover);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .quantity-box button:hover {
+            background: #e2e8f0;
+        }
+
+        .quantity-box input {
+            width: 60px;
+            height: 44px;
+            text-align: center;
+            border: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            background: transparent;
+        }
+
+        .quantity-box input:focus {
+            outline: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-cart {
+            flex: 1;
+            padding: 1.25rem;
+            background: var(--surface-solid);
+            color: var(--text);
+            border: 2px solid var(--border);
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cart:hover {
+            border-color: var(--text);
+            background: var(--hover);
+        }
+
+        .btn-buy {
+            flex: 1;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .product-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 0 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button onclick="window.history.back()"
+                    style="background: none; border: none; cursor: pointer; color: var(--secondary); display: flex; align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                    onmouseout="this.style.background='none'" aria-label="Go Back" title="Go Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <a href="/" class="logo">Easy Cart</a>
+            </div>
+            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <div id="authLinks" style="display: flex; gap: 1rem; align-items: center;">
+                    <!-- Populated by main.js -->
+                </div>
+                <a href="/cart.html" class="cart-icon"
+                    style="color: var(--text); text-decoration: none; position: relative; display: flex; align-items: center; gap: 0.5rem; font-weight: 500;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="product-container" id="productContainer">
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem;">
+                <div class="loading-spinner">Loading product...</div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Easy Cart</h3>
+                    <p>Your premium and reliable e-commerce store for everyday shopping. Discover quality products
+                        curated just for you.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/cart.html">Cart</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: support@easycart.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script> Easy Cart. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        const API_BASE_URL = 'http://localhost:3000/api';
+        let currentProduct = null;
+
+        // These formatINR / convertToINR functions might exist in main.js, 
+        // but just in case we define local fallbacks if needed.
+        function localFormatINR(price) {
+            return '₹' + price.toLocaleString('en-IN');
+        }
+
+        function increment() {
+            const input = document.getElementById('quantity');
+            const current = parseInt(input.value);
+            const max = parseInt(input.max);
+            if (current < max) {
+                input.value = current + 1;
+            }
+        }
+
+        function decrement() {
+            const input = document.getElementById('quantity');
+            const current = parseInt(input.value);
+            if (current > 1) {
+                input.value = current - 1;
+            }
+        }
+
+        async function loadProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Default to ID 8 (Backpack) if no ID is passed
+            const productId = urlParams.get('id') || 8;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/${productId}`);
+                if (!response.ok) throw new Error('Product not found');
+
+                const product = await response.json();
+
+                // Fetch product images
+                const imagesResponse = await fetch(`${API_BASE_URL}/products/${productId}/images`);
+                let images = [];
+                if (imagesResponse.ok) {
+                    images = await imagesResponse.json();
+                }
+
+                currentProduct = product;
+                renderProduct(product, images);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('productContainer').innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 4rem;">
+                        <h2>Product not found</h2>
+                        <a href="/" class="btn btn-primary" style="margin-top: 1rem;">Back to Home</a>
+                    </div>
+                `;
+            }
+        }
+
+        function changeMainImage(src, thumbnailElement) {
+            document.getElementById('mainImage').src = src;
+
+            // Update active state
+            document.querySelectorAll('.thumbnail-strip img').forEach(img => {
+                img.classList.remove('active');
+            });
+            if (thumbnailElement) {
+                thumbnailElement.classList.add('active');
+            }
+        }
+
+        function renderProduct(product, images = []) {
+            const container = document.getElementById('productContainer');
+            // Check if convertToINR is available globally from main.js, otherwise use fallback
+            const priceINR = typeof window.convertToINR === 'function'
+                ? window.convertToINR(product.price)
+                : Math.round(parseFloat(product.price) * 83);
+
+            const formattedPrice = typeof window.formatINR === 'function'
+                ? window.formatINR(priceINR)
+                : localFormatINR(priceINR);
+
+            const mainImageUrl = product.image || 'https://via.placeholder.com/500?text=Product';
+
+            let thumbnailsHtml = '';
+            // If we have images from DB, use them for the thumbnail strip
+            if (images && images.length > 0) {
+                thumbnailsHtml = `
+                    <div class="thumbnail-strip">
+                        ${images.map((img, index) => `
+                            <img src="${img.image_url}" 
+                                 alt="${product.name} angle ${index + 1}" 
+                                 class="${index === 0 ? 'active' : ''}"
+                                 onclick="changeMainImage(this.src, this)"
+                                 onerror="this.src='https://via.placeholder.com/80?text=Image'">
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <!-- Left Column - Images -->
+                <div class="image-gallery">
+                    <div class="main-image-box">
+                        <img id="mainImage" 
+                             src="${images.length > 0 ? images[0].image_url : mainImageUrl}" 
+                             alt="${product.name}"
+                             onerror="this.src='https://via.placeholder.com/500?text=Product'">
+                    </div>
+                    ${thumbnailsHtml}
+                </div>
+
+                <!-- Right Column - Product Info -->
+                <div class="product-info">
+                    <h1>${product.name}</h1>
+                    <p style="color: #6B7280;">${product.category || 'Uncategorized'}</p>
+                    <div class="price">${formattedPrice}</div>
+                    <p style="line-height: 1.8; color: #374151;">
+                        ${product.description}
+                    </p>
+                    <div class="stock">✓ In Stock (${product.stock} units available)</div>
+                    
+                    <div class="quantity-box">
+                        <label style="font-weight: 500;">Quantity:</label>
+                        <button onclick="decrement()">-</button>
+                        <input type="number" id="quantity" min="1" max="${product.stock}" value="1" readonly>
+                        <button onclick="increment()">+</button>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-cart" onclick="addToCart(false)">Add to Cart</button>
+                        <button class="btn-buy" onclick="buyNowDirect()">Buy Now</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function addToCart(isBuyNow) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                if (confirm('Please login to add items to cart')) {
+                    window.location.href = '/login.html';
+                }
+                return;
+            }
+
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/cart`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: currentProduct.id,
+                        quantity: quantity
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Update cart count in header
+                    const cartCount = document.getElementById('cartCount');
+                    if (cartCount) {
+                        cartCount.textContent = data.cartCount;
+                    }
+
+                    if (isBuyNow) {
+                        window.location.href = '/cart.html';
+                    } else {
+                        alert(`Added ${quantity} ${currentProduct.name}(s) to cart!`);
+                    }
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Failed to add to cart');
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        function buyNowDirect() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                if (confirm('Please login to place an order')) {
+                    window.location.href = '/login.html';
+                }
+                return;
+            }
+
+            const quantity = parseInt(document.getElementById('quantity').value);
+            window.location.href = `/checkout.html?direct=true&productId=${currentProduct.id}&quantity=${quantity}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProduct();
+        });
+    </script>
+</body>
+
+</html>

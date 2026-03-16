@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Cart - Home</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .hero {
+            background: var(--background);
+            padding: 8rem 2rem 10rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: none;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out alternate;
+        }
+
+        .hero::before {
+            background: rgba(139, 92, 246, 0.3);
+            top: -200px;
+            left: -100px;
+        }
+
+        .hero::after {
+            background: rgba(79, 70, 229, 0.2);
+            bottom: -300px;
+            right: -100px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-50px, 100px) scale(0.9);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            position: relative;
+            z-index: 2;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(139, 92, 246, 0.2));
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--subtext);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            flex-wrap: wrap;
+        }
+
+        .category-pill {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            background: var(--surface-solid);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            color: var(--subtext);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-pill:hover,
+        .category-pill.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+            transform: translateY(-2px);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto 4rem auto;
+        }
+
+        .product-card {
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--surface-solid);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(79, 70, 229, 0.2);
+        }
+
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background: #ffffff;
+            /* Contrast for product images */
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image-container {
+            background: #fbfbfb;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.08);
+        }
+
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 700;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            letter-spacing: -0.025em;
+        }
+
+        .product-price {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: var(--subtext);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex-grow: 1;
+            line-height: 1.5;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 4rem;
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #111827;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .search-container {
+            max-width: 700px;
+            margin: -3rem auto 3rem auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 1.25rem 2rem;
+            border: none;
+            border-radius: 9999px;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.15), 0 8px 10px -6px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 0 2.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -3px rgba(79, 70, 229, 0.4);
+        }
+
+        .card-action-btn {
+            position: absolute;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .product-card:hover .card-action-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-action-btn:hover {
+            transform: scale(1.1) translateY(0) !important;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-like {
+            top: 10px;
+            right: 10px;
+            color: white;
+            /* Inside is white when not liked */
+        }
+
+        .btn-like.liked {
+            color: #ef4444;
+            /* Inside is red when liked */
+        }
+
+        .btn-like svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            stroke: #9ca3af;
+            /* Gray border by default */
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .btn-like.liked svg {
+            stroke: #ef4444;
+            /* Red border when liked */
+        }
+
+        .btn-add-cart {
+            bottom: 10px;
+            right: 10px;
+            background: #111827;
+            color: white;
+        }
+
+        .btn-add-cart svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar handles glassmorphism via CSS, removed hardcoded styles -->
+    <nav class="navbar">
+        <div class="container"
+            style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button onclick="window.history.back()"
+                    style="background: none; border: none; cursor: pointer; color: var(--secondary); display: flex; align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                    onmouseout="this.style.background='none'" aria-label="Go Back" title="Go Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <a href="/" class="logo">Easy Cart</a>
+            </div>
+            <div style="display: flex; gap: 2rem; align-items: center;" class="nav-links">
+                <div id="authLinks" style="display: flex; gap: 1rem; align-items: center;">
+                    <!-- Will be populated by JS -->
+                </div>
+                <div style="position: relative;">
+                    <a href="/cart.html"
+                        style="color: var(--secondary); text-decoration: none; position: relative; display: flex; align-items: center; gap: 0.5rem; padding-right: 1.5rem; font-weight: 500;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        Cart
+                        <span id="cartCount" class="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Welcome to Easy Cart</h1>
+            <p>Discover our amazing collection of products at the best prices.</p>
+        </section>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search for products...">
+            <button class="search-btn">Search</button>
+        </div>
+
+        <div class="filters" id="categoryFilters">
+            <!-- Categories will be loaded here by JS -->
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be loaded here by JS -->
+        </div>
+
+        <div id="paginationContainer" style="text-align: center; margin: 2rem 0 4rem 0; display: none;">
+            <button id="loadMoreBtn" class="btn btn-outline"
+                style="padding: 1rem 3rem; font-size: 1.1rem; border-radius: 9999px;">
+                Load More Products
+            </button>
+            <p id="paginationInfo" style="margin-top: 1rem; color: var(--subtext); font-size: 0.9rem;"></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Easy Cart</h3>
+                    <p>Your premium and reliable e-commerce store for everyday shopping. Discover quality products
+                        curated just for you.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/cart.html">Cart</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: support@easycart.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script> Easy Cart. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

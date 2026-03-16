@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Easy Cart</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button onclick="window.history.back()"
+                    style="background: none; border: none; cursor: pointer; color: var(--secondary); display: flex; align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                    onmouseout="this.style.background='none'" aria-label="Go Back" title="Go Back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <a href="/" class="logo">Easy Cart</a>
+            </div>
+            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <div id="authLinks" style="display: flex; gap: 1rem; align-items: center;">
+                    <!-- Populated by main.js -->
+                </div>
+                <a href="/cart.html" class="cart-icon"
+                    style="color: var(--text); text-decoration: none; position: relative; display: flex; align-items: center; gap: 0.5rem; font-weight: 500;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="form-container">
+            <h2 style="margin-bottom: 2rem;">Checkout</h2>
+            <div id="alert" class="alert" style="display: none;"></div>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Shipping Address</label>
+                    <textarea id="address" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="zipCode">ZIP Code</label>
+                    <input type="text" id="zipCode" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <label
+                            style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: normal;">
+                            <input type="radio" name="paymentMethod" value="card" checked
+                                onchange="togglePaymentFields()"> Credit/Debit Card
+                        </label>
+                        <label
+                            style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: normal;">
+                            <input type="radio" name="paymentMethod" value="upi" onchange="togglePaymentFields()"> UPI
+                        </label>
+                        <label
+                            style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: normal;">
+                            <input type="radio" name="paymentMethod" value="netbanking"
+                                onchange="togglePaymentFields()"> Net Banking
+                        </label>
+                        <label
+                            style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: normal;">
+                            <input type="radio" name="paymentMethod" value="cod" onchange="togglePaymentFields()"> Cash
+                            on Delivery
+                        </label>
+                    </div>
+                </div>
+
+                <div id="cardDetails">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" class="form-control" placeholder="**** **** **** ****">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input type="text" id="expiry" class="form-control" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" class="form-control" placeholder="***">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="upiDetails" style="display: none;">
+                    <div class="form-group">
+                        <label for="upiId">UPI ID</label>
+                        <input type="text" id="upiId" class="form-control" placeholder="username@bank">
+                    </div>
+                    <div
+                        style="text-align: center; margin-top: 1rem; padding: 1rem; border: 1px dashed var(--border); border-radius: 8px;">
+                        <p style="color: var(--subtext); margin-bottom: 0.5rem;">Or scan QR code to pay</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=merchant@upi&pn=EasyCart"
+                            alt="UPI QR Code" style="width: 150px; height: 150px;">
+                    </div>
+                </div>
+
+                <div id="netBankingDetails" style="display: none;">
+                    <div class="form-group">
+                        <label for="bankSelect">Select Bank</label>
+                        <select id="bankSelect" class="form-control">
+                            <option value="">-- Choose a Bank --</option>
+                            <option value="sbi">State Bank of India (SBI)</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="kotak">Kotak Mahindra Bank</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="codDetails"
+                    style="display: none; padding: 1rem; border: 1px dashed var(--border); border-radius: 8px; text-align: center;">
+                    <p style="color: var(--subtext); margin: 0;">You can pay via Cash or UPI at the time of delivery.
+                    </p>
+                </div>
+                <div style="margin: 2rem 0; text-align: right;">
+                    <strong>Total: <span id="orderTotal">₹0.00</span></strong>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Place Order</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Easy Cart</h3>
+                    <p>Your simple and reliable e-commerce store for everyday shopping.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/cart.html">Cart</a>
+                    <a href="/login.html">Login</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: support@easycart.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Parse URL params for direct buy mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const isDirectBuy = urlParams.get('direct') === 'true';
+        const directProductId = urlParams.get('productId');
+        const directQuantity = urlParams.get('quantity');
+
+        // Load cart total or single product total
+        async function loadCartTotal() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            try {
+                if (isDirectBuy && directProductId && directQuantity) {
+                    const response = await fetch(`http://localhost:3000/api/products/${directProductId}`);
+                    if (response.ok) {
+                        const product = await response.json();
+                        const total = product.price * parseInt(directQuantity);
+                        document.getElementById('orderTotal').textContent = `₹${total.toFixed(2)}`;
+                    } else {
+                        showAlert('Error loading product details', 'error');
+                    }
+                } else {
+                    const response = await fetch('http://localhost:3000/api/cart', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const cartItems = await response.json();
+                        const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                        document.getElementById('orderTotal').textContent = `₹${total.toFixed(2)}`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading totals:', error);
+            }
+        }
+
+        // Handle checkout form submission
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const address = document.getElementById('address').value + ', ' +
+                document.getElementById('city').value + ' ' +
+                document.getElementById('zipCode').value;
+
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            // Validate based on payment method
+            let currentPaymentDetailsValid = true;
+            if (paymentMethod === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const expiry = document.getElementById('expiry').value;
+                const cvv = document.getElementById('cvv').value;
+                if (!cardNumber || !expiry || !cvv) {
+                    currentPaymentDetailsValid = false;
+                    showAlert('Please fill in all card details', 'error');
+                }
+            } else if (paymentMethod === 'upi') {
+                const upiId = document.getElementById('upiId').value;
+                if (!upiId) {
+                    currentPaymentDetailsValid = false;
+                    showAlert('Please enter your UPI ID', 'error');
+                }
+            } else if (paymentMethod === 'netbanking') {
+                const bankSelect = document.getElementById('bankSelect').value;
+                if (!bankSelect) {
+                    currentPaymentDetailsValid = false;
+                    showAlert('Please select your Bank for Net Banking', 'error');
+                }
+            }
+            // Optional: COD requires no extra validation
+
+            if (!currentPaymentDetailsValid) return;
+
+            try {
+                let url = 'http://localhost:3000/api/orders';
+                let bodyData = {
+                    shippingAddress: address,
+                    paymentMethod: paymentMethod
+                };
+
+                if (isDirectBuy && directProductId && directQuantity) {
+                    url = 'http://localhost:3000/api/orders/direct';
+                    bodyData.productId = directProductId;
+                    bodyData.quantity = parseInt(directQuantity);
+                }
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (response.ok) {
+                    alert('Order placed successfully!');
+                    window.location.href = '/';
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || 'Failed to place order', 'error');
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+                showAlert('Failed to place order', 'error');
+            }
+        });
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+        }
+
+        function togglePaymentFields() {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const cardDetails = document.getElementById('cardDetails');
+            const upiDetails = document.getElementById('upiDetails');
+            const netBankingDetails = document.getElementById('netBankingDetails');
+            const codDetails = document.getElementById('codDetails');
+
+            cardDetails.style.display = 'none';
+            upiDetails.style.display = 'none';
+            netBankingDetails.style.display = 'none';
+            codDetails.style.display = 'none';
+
+            if (paymentMethod === 'card') {
+                cardDetails.style.display = 'block';
+            } else if (paymentMethod === 'upi') {
+                upiDetails.style.display = 'block';
+            } else if (paymentMethod === 'netbanking') {
+                netBankingDetails.style.display = 'block';
+            } else if (paymentMethod === 'cod') {
+                codDetails.style.display = 'block';
+            }
+        }
+
+        loadCartTotal();
+
+        // Initial setup for payment fields
+        togglePaymentFields();
+    </script>
+</body>
+
+</html>
