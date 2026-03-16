@@ -45,3 +45,32 @@ A professional, full-stack e-commerce website built with HTML, CSS, JavaScript, 
 - bcrypt for password hashing
 
 ## 📁 Project Structure
+
+```text
+easy-cart/
+├── backend/
+│   ├── append_products.js
+│   ├── append_products_2.js
+│   ├── database.js
+│   ├── drop_db.js
+│   ├── fix_images.js
+│   ├── fix_server.js
+│   ├── package.json
+│   └── server.js
+├── database/
+│   └── schema.sql
+├── frontend/
+│   ├── cart.html
+│   ├── checkout.html
+│   ├── dashboard.html
+│   ├── index.html
+│   ├── login.html
+│   ├── product.html
+│   ├── register.html
+│   ├── js/
+│   │   └── main.js
+│   └── styles/
+│       └── main.css
+├── .gitignore
+└── README.md
+```
